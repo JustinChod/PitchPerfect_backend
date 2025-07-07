@@ -4,5 +4,3 @@ python-pptx
 gunicorn
 flask-cors
 requests
-
-"Add requirements.txt with dependencies"
