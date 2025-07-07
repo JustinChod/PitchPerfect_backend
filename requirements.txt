@@ -3,3 +3,4 @@ openai
 python-pptx
 gunicorn
 flask-cors
+requests
