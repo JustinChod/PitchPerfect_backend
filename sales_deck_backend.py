@@ -33,7 +33,23 @@ if not OPENAI_API_KEY:
     raise ValueError("OPENAI_API_KEY environment variable is required")
 
 # Initialize OpenAI client (new v1+ syntax)
-client = OpenAI(api_key=OPENAI_API_KEY)
+# Be explicit about parameters to avoid proxy issues
+client = None
+
+def get_openai_client():
+    """Initialize OpenAI client with explicit parameters"""
+    global client
+    if client is None:
+        try:
+            client = OpenAI(
+                api_key=OPENAI_API_KEY,
+                timeout=30.0,
+                max_retries=2
+            )
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI client: {e}")
+            raise
+    return client
 
 # File storage configuration
 UPLOAD_FOLDER = 'temp_files'
@@ -130,6 +146,7 @@ def generate_slide_content(company_name, industry, buyer_persona, main_pain_poin
     
     try:
         # Use new OpenAI client syntax
+        client = get_openai_client()
         response = client.chat.completions.create(
             model="gpt-4o-mini",  # Updated model name
             messages=[
